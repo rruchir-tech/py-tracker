@@ -14,7 +14,7 @@ ser.flushInput()
 
 power_key = 6
 
-ADAFRUIT_IO_KEY = 'aio_IYbl715s7zcS2eOnWTftgc0UohMp'
+ADAFRUIT_IO_KEY = 'aio_WMPt83AJCkeOoSZzoMtG4fdhHWh2'
 ADAFRUIT_IO_USERNAME = 'Nakshath'
 ADAFRUIT_FEED = 'gpstracker/json'
 
@@ -59,40 +59,44 @@ def send_command(command,back,timeout):
         return 'ERR'
 
 def get_gps_location(location):
-    global GPSDATA
-    GPSDATA = location
-    Cleaned = GPSDATA[25:]
-    #print(Cleaned)
-    Lat = Cleaned[:2]
-    SmallLat = Cleaned[2:11]
-    NorthOrSouth = Cleaned[12]
-    #print(Lat, SmallLat, NorthOrSouth)
-    Long = Cleaned[14:17]
-    SmallLong = Cleaned[17:26]
-    EastOrWest = Cleaned[27]
-    #print(Long, SmallLong, EastOrWest)
-    FinalLat = float(Lat) + (float(SmallLat)/60)
-    FinalLong = float(Long) + (float(SmallLong)/60)
-
-    if NorthOrSouth == 'S': FinalLat = -FinalLat
-    if EastOrWest == 'W': FinalLong = -FinalLong
-
-    FinalLongText = round(FinalLong, 6)
-    FinalLatText = round(FinalLat, 6)
-
-    StringFinalLongText = str(FinalLongText)
-    StringFinalLatText = str(FinalLatText)
-
-    #print(FinalLat, FinalLong)
-    #print(FinalLat, FinalLong)
-    #print(rec_buff.decode())
     json_data = {
         'key': 'gpstracker',
         'value': 1,
-        'lat': FinalLatText,
-        'lon': FinalLongText,
+        'lat': 0,
+        'lon': 0,
         'ele': 112,
     }
+    if len(location) > 50:
+        GPSDATA = location
+        Cleaned = GPSDATA[25:]
+        #print(Cleaned)
+        Lat = Cleaned[:2]
+        SmallLat = Cleaned[2:11]
+        NorthOrSouth = Cleaned[12]
+        #print(Lat, SmallLat, NorthOrSouth)
+        Long = Cleaned[14:17]
+        SmallLong = Cleaned[17:26]
+        EastOrWest = Cleaned[27]
+        #print(Long, SmallLong, EastOrWest)
+        FinalLat = float(Lat) + (float(SmallLat)/60)
+        FinalLong = float(Long) + (float(SmallLong)/60)
+
+        if NorthOrSouth == 'S': FinalLat = -FinalLat
+        if EastOrWest == 'W': FinalLong = -FinalLong
+
+        FinalLongText = round(FinalLong, 6)
+        FinalLatText = round(FinalLat, 6)
+
+        StringFinalLongText = str(FinalLongText)
+        StringFinalLatText = str(FinalLatText)
+
+        #print(FinalLat, FinalLong)
+        #print(FinalLat, FinalLong)
+        #print(rec_buff.decode())
+        json_data.lat = FinalLatText,
+        json_data.lon = FinalLongText,
+    else:
+        print ('No Gps Data: ' + location)
     return json.dumps(json_data)
 
 def mqtt_connect(client):
@@ -118,6 +122,7 @@ client.on_connect = mqtt_connect
 client.on_disconnect = mqtt_disconnect
 
 button = Button(22)
+print('Wating for button press ...')
 button.wait_for_press()
 print("The button was pressed!")
 
