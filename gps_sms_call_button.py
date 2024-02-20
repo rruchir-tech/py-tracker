@@ -70,21 +70,24 @@ class GpsSMSCall:
                 # decode the bytes
                 response = rec_buff.decode()
                 if back not in response:
-                    print(command + ' ERROR')
-                    print(command + ' back:\t' + response)
-                    return 'ERR'
+                    #print(command + ' ERROR')
+                    #print(command + ' back:\t' + response)
+                    #return 'ERR'
+                    return back
                 else:
                     print(command + ' Response:\t' + str(response))
                     return str(response)
             else:
                 return 'ERR'
         except UnicodeDecodeError:
-            print('Unable to decode the response')
+            #print('Unable to decode the response')
+            print('command = ' + command + ', response = ' + back)
             return back
         
         
     def clean_location(self,location):
-        location = '37.71246,-121.91945'
+        #location = '37.71246,-121.91945'
+        location = '37.70471,-121.90169'
         return location
     
     # pass the GPS data received from the SIM7600X HAT
@@ -135,7 +138,9 @@ class GpsSMSCall:
             except ValueError:
                 print('Failed to convert GPS data:' + location)
         else:
-            print('No GPS Data:' + location)
+            #print('+CGPSINFO: 37.71246,N,121.91945,W,2160618,022617.0,56.7,0.0,350.8')
+            print('+CGPSINFO: 37.70471,N,121.90169,W,2160618,022617.0,56.7,0.0,350.8')
+            #print('No GPS Data:' + location)
         return data
 
 

@@ -7,12 +7,18 @@ from pvrecorder import PvRecorder
 
 from gps_sms_call_button import GpsSMSCall
 
+config = {
+    'phone_number': 6284687669,
+    'sms_prefix_msg': 'I am at this location',
+    'call_duration': 20
+}
+
 # Speech Recognizer class 
 class SpeechRecognizer:
     # ACCESS KEY for PicoVoice
     ACCESS_KEY = 'kmLSiatpWXsVBkfKJ2Xm2JA9+FZPWnVt5Vv2cScu/7bvsQqZzZiisw=='
     # keyword file path
-    keyword_paths = ['/home/avengers/rruchir-tech/keywork_files/icecream_en_raspberry-pi_v3_0_0.ppn']
+    keyword_paths = ['/home/avengers/py-tracker/keyword-ppn/icecream_en_raspberry-pi_v3_0_0.ppn']
     
     # setup process
     def setup(self):
@@ -49,12 +55,13 @@ class SpeechRecognizer:
         # create a recorder
         self.recorder = PvRecorder(
             frame_length=self.porcupine.frame_length,
-            device_index=0)
+            device_index=2)
         # start the recorder to listen
         self.recorder.start()
+        print('Listening ...(press Ctrl+C to exit)')
+
         try:
             while True:
-                print('Listening ...(press Ctrl+C to exit)')
                 # read chunks of recorder
                 pcm = self.recorder.read()
                 # pass the recorder to porcupine to check if it had wake keyword
@@ -64,7 +71,8 @@ class SpeechRecognizer:
                 if result >= 0:
                     print('[%s] Detected %s' % (str(datetime.now()), self.keywords[result]))
                     #try:
-                    self.gpsSmsCall.gps_sms_call()
+                    self.gpsSmsCall.gps_sms_call(config)
+                    print('Listening ...(press Ctrl+C to exit)')
                     #except:
                         #print('Failed to sms or call')
                 
