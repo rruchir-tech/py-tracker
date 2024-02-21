@@ -70,24 +70,25 @@ class GpsSMSCall:
                 # decode the bytes
                 response = rec_buff.decode()
                 if back not in response:
-                    #print(command + ' ERROR')
-                    #print(command + ' back:\t' + response)
-                    #return 'ERR'
-                    return back
+                    print(command + ' ERROR')
+                    print(command + ' back:\t' + response)
+                    return 'ERR'
+                    #return back
                 else:
                     print(command + ' Response:\t' + str(response))
                     return str(response)
             else:
                 return 'ERR'
         except UnicodeDecodeError:
-            #print('Unable to decode the response')
-            print('command = ' + command + ', response = ' + back)
-            return back
+            print('Unable to decode the response')
+            #print('command = ' + command + ', response = ' + back)
+            #return back
+            return 'ERR'
         
         
     def clean_location(self,location):
-        #location = '37.71246,-121.91945'
-        location = '37.70471,-121.90169'
+        location = '37.71246,-121.91945'
+        #location = '37.70471,-121.90169'
         return location
     
     # pass the GPS data received from the SIM7600X HAT
@@ -96,9 +97,10 @@ class GpsSMSCall:
     # they are 60 minutes in a degree so divide the minutes by 60 and add that to the degrees
     # convert GPS NMEA format to human readable lat and long value
     def get_gps_location(self,location):
+        #default location
         data = {
-            'long': 0,
-            'lat': 0
+            'long': -121.91945,
+            'lat': 37.71246
         }
         if len(location) > 50:
             try:
@@ -139,8 +141,8 @@ class GpsSMSCall:
                 print('Failed to convert GPS data:' + location)
         else:
             #print('+CGPSINFO: 37.71246,N,121.91945,W,2160618,022617.0,56.7,0.0,350.8')
-            print('+CGPSINFO: 37.70471,N,121.90169,W,2160618,022617.0,56.7,0.0,350.8')
-            #print('No GPS Data:' + location)
+            #print('+CGPSINFO: 37.70471,N,121.90169,W,2160618,022617.0,56.7,0.0,350.8')
+            print('No GPS Data:' + location)
         return data
 
 
@@ -148,7 +150,7 @@ class GpsSMSCall:
     # create a google map link by using the location
     # create a message to send in SMS
     def create_sms_message(self, prefix, location):
-        location = self.clean_location(location)
+        #location = self.clean_location(location)
         text_message = (prefix + ' https://maps.google.com/?q=' + location)
         print(text_message)
         return text_message

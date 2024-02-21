@@ -7,7 +7,7 @@ from datetime import datetime
 from gps_sms_call_button import GpsSMSCall
 
 config = {
-    'phone_number': 6284687669,
+    'phone_number': 5102988763,
     'sms_prefix_msg': 'I am at this location',
     'call_duration': 20
 }
