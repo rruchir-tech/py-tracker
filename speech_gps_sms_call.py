@@ -8,7 +8,7 @@ from pvrecorder import PvRecorder
 from gps_sms_call_button import GpsSMSCall
 
 config = {
-    'phone_number': 6284687669,
+    'phone_number': 5102988763,
     'sms_prefix_msg': 'I am at this location',
     'call_duration': 20
 }
@@ -55,7 +55,7 @@ class SpeechRecognizer:
         # create a recorder
         self.recorder = PvRecorder(
             frame_length=self.porcupine.frame_length,
-            device_index=2)
+            device_index=0)
         # start the recorder to listen
         self.recorder.start()
         print('Listening ...(press Ctrl+C to exit)')
@@ -71,7 +71,7 @@ class SpeechRecognizer:
                 if result >= 0:
                     print('[%s] Detected %s' % (str(datetime.now()), self.keywords[result]))
                     #try:
-                    self.gpsSmsCall.gps_sms_call(config)
+                  #  self.gpsSmsCall.gps_sms_call(config)
                     print('Listening ...(press Ctrl+C to exit)')
                     #except:
                         #print('Failed to sms or call')
