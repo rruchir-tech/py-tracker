@@ -6,9 +6,9 @@ from gpiozero import Button
 import serial
 import time
 
-<<<<<<< HEAD
+
 power_key = 6
-phone_number = '6284687669'
+phone_number = '5102988763'
 
 class GpsSMSCall:
     def __init__(self):
@@ -264,4 +264,4 @@ else:
 print('Stop GPS Session....')
 send_command('AT+CGPS=0','OK',1)
 power_down(power_key) 
->>>>>>> 8ddc4711d09ee0ef45cd36681c5b64465c646545
+

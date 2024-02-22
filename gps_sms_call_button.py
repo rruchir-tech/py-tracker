@@ -6,9 +6,6 @@ from gpiozero import Button
 import serial
 import time
 
-power_key = 6
-
-
 class GpsSMSCall:
 
     # make a serial port connection to '/dev/ttyS0'
@@ -19,38 +16,6 @@ class GpsSMSCall:
         self.ser.flushInput()
 
 #Important User-Defined function to make talking to the HAT easier
-
-    # start SIM7600X HAT
-    # GPIO: General Purpose Input Output
-    # setting the numbering system to BCM
-    # disable the warnings
-    # setup power key as output channel
-    # set the output state of power key to High and LOW
-    # flush input to discard all its content
-    def power_on(self, power_key):
-        print('SIM7600X is starting:')
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(power_key,GPIO.OUT)
-        time.sleep(0.1)
-        GPIO.output(power_key,GPIO.HIGH)
-        time.sleep(2)
-        GPIO.output(power_key,GPIO.LOW)
-        time.sleep(20)
-        self.ser.flushInput()
-        print('SIM7600X is ready')
-
-    # set output state of power key to High and LOW
-    def power_down(self,power_key):
-        print('SIM7600X is loging off:')
-        GPIO.output(power_key,GPIO.HIGH)
-        time.sleep(3)
-        GPIO.output(power_key,GPIO.LOW)
-        time.sleep(18)
-        GPIO.cleanup()
-        if self.ser != None:
-            self.ser.close()
-        print('Good bye')
 
     # Pass the AT command, response to check, timeout
     # if error received return 'ERR'
@@ -193,7 +158,6 @@ class GpsSMSCall:
 
     # power up the module and turn on the GPS
     def setup(self):
-        self.power_on(power_key)
         print('Start GPS session...')
         # open GPS
         self.send_command('AT+CGPS=1,1','OK',1)
@@ -223,4 +187,6 @@ class GpsSMSCall:
     def shutdown(self):
         print('Stop GPS Session....')
         self.send_command('AT+CGPS=0','OK',1)
-        self.power_down(power_key) 
+        if self.ser != None:
+            self.ser.close()
+
