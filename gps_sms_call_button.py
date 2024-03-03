@@ -6,6 +6,8 @@ from gpiozero import Button
 import serial
 import time
 
+from geo_fence_check import GeoFenceCheck
+
 class GpsSMSCall:
 
     # make a serial port connection to '/dev/ttyS0'
@@ -14,6 +16,7 @@ class GpsSMSCall:
     def __init__(self):
         self.ser = serial.Serial('/dev/ttyS0',115200)
         self.ser.flushInput()
+        self.fenceChecker = GeoFenceCheck()
 
 #Important User-Defined function to make talking to the HAT easier
 
@@ -119,6 +122,18 @@ class GpsSMSCall:
         text_message = (prefix + ' https://maps.google.com/?q=' + location)
         print(text_message)
         return text_message
+    
+    # Pass the is_inside flag and location (lat and long)
+    # create a google map link by using the location
+    # create a message to send in SMS
+    def create_fence_check_msg(self, is_inside, location):
+        if (is_inside):
+            prefix = 'Person is inside the target geo fence'
+        else:
+            prefix = 'Person is outside the target geo fence'
+        text_message = (prefix + ' https://maps.google.com/?q=' + location)
+        print(text_message)
+        return text_message
 
     # Pass the phone number and message
     # sends the message to the phone number
@@ -161,7 +176,7 @@ class GpsSMSCall:
         print('Start GPS session...')
         # open GPS
         self.send_command('AT+CGPS=1,1','OK',1)
-        time.sleep(2)
+        time.sleep(10)
 
 
     # get GPS data
@@ -181,6 +196,27 @@ class GpsSMSCall:
             self.call_phone(config['phone_number'], config['call_duration'])
         else:
             print('GPS is not ready')
+    
+    # get GPS data
+    def check_inside_fence(self, config):
+        print('Get GPS location...')
+        # Get GPS information to the serial port
+        response = self.send_command('AT+CGPSINFO','+CGPSINFO: ',1)
+        if 'ERR' != response:
+            # convert to human readable location
+            data = self.get_gps_location(response)
+            if 'lat' in data.keys() and 'long' in data.keys():
+                gps_fence_config = {
+                    'long': data['long'],
+                    'lat': data['lat'],
+                    'kml_file_path': config['kml_file_path']
+                }
+                is_inside = self.fenceChecker.check_point_in_fence(gps_fence_config)
+                message = self.create_fence_check_msg(is_inside, str(data['lat']) + ',' + str(data['long']))
+                self.send_sms_message(config['phone_number'], message)
+        else:
+            print('GPS is not ready')
+
 
     # close GPS
     # turn off the SIM7600X
