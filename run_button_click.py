@@ -8,7 +8,7 @@ from gps_sms_call_button import GpsSMSCall
 
 config = {
     'phone_number': '6284687669',
-    'sms_prefix_msg': 'I am at this location',
+    'sms_prefix_msg': '[Emergency Alert]:SOS Button pressed. I am at this location',
     'call_duration': 20
 }
 

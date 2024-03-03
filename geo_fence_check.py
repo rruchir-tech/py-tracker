@@ -1,4 +1,5 @@
 from xml.dom import minidom
+from datetime import datetime
 
 class GeoFenceCheck:
 
@@ -12,6 +13,7 @@ class GeoFenceCheck:
             dom = minidom.parseString(content)
             placemarks = dom.getElementsByTagName('Placemark')
             for placemark in placemarks:
+                name = placemark.getElementsByTagName('name')[0].childNodes[0].nodeValue
                 polygon = placemark.getElementsByTagName('Polygon')
                 if polygon:
                     outer_boundary = polygon[0].getElementsByTagName('outerBoundaryIs')
@@ -21,7 +23,7 @@ class GeoFenceCheck:
                         for coord in coordinates_list:
                             lon, lat, _ = coord.split(',')
                             coordinates.append((float(lon), float(lat)))
-        return coordinates
+        return (name, coordinates)
 
 
     """Using odd-even rule check if the point is on the path, corner, or boundary of the polygon
@@ -59,15 +61,15 @@ class GeoFenceCheck:
     Returns:
       True if the point is inside the geo fence"""
     def check_point_in_fence(self,config):
-        polygon_coordinates = self.read_kml_file(config['kml_file_path'])
-        print(polygon_coordinates)
+        geofence_name, polygon_coordinates = self.read_kml_file(config['kml_file_path'])
+        print('[%s] Geo Fence: %s, Coordinates : %s' % (str(datetime.now()), geofence_name, str(polygon_coordinates)))
     
         is_inside = self.is_point_inside_polygon(config['long'], config['lat'], polygon_coordinates)
         if is_inside:
             print(str(config['long']) + "," + str(config['lat']) + " is inside the geo fence.")
         else:
             print(str(config['long']) + "," + str(config['lat']) + " is outside the geo fence.")
-        return is_inside
+        return (geofence_name, is_inside)
 
    
     

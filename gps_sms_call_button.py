@@ -126,11 +126,11 @@ class GpsSMSCall:
     # Pass the is_inside flag and location (lat and long)
     # create a google map link by using the location
     # create a message to send in SMS
-    def create_fence_check_msg(self, is_inside, location):
+    def create_fence_check_msg(self, geofence_name, is_inside, location):
         if (is_inside):
-            prefix = 'Person is inside the target geo fence'
+            prefix = '[Geo Fence: Inside]: Person is inside the ' + geofence_name + '.'
         else:
-            prefix = 'Person is outside the target geo fence'
+            prefix = '[Geo Fence: Outside]: Person is outside the ' + geofence_name + '.'
         text_message = (prefix + ' https://maps.google.com/?q=' + location)
         print(text_message)
         return text_message
@@ -211,8 +211,8 @@ class GpsSMSCall:
                     'lat': data['lat'],
                     'kml_file_path': config['kml_file_path']
                 }
-                is_inside = self.fenceChecker.check_point_in_fence(gps_fence_config)
-                message = self.create_fence_check_msg(is_inside, str(data['lat']) + ',' + str(data['long']))
+                geofence_name,is_inside = self.fenceChecker.check_point_in_fence(gps_fence_config)
+                message = self.create_fence_check_msg(geofence_name, is_inside, str(data['lat']) + ',' + str(data['long']))
                 self.send_sms_message(config['phone_number'], message)
         else:
             print('GPS is not ready')
