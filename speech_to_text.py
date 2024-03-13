@@ -120,10 +120,10 @@ class SpeechToText:
             self.parser.exit(type(e).__name__ + ": " + str(e))
 
 config = {
-    'audio_device': 1,
+    'audio_device': 2,
     'model_lang': 'en-us',
     'safeword': 'ice cream',
-    'phone_number': 6284687669,
+    'phone_number': 5102988763,
     'sms_prefix_msg': '[Emergency Alert]:safeword detection. Person is currently at this location',
     'call_duration': 20,
     }
